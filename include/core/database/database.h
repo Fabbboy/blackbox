@@ -18,8 +18,6 @@ char* get(char *db_name, char *layer_name, char *key);
 
 void remove(char *db_name, char *layer_name, char *key);
 
-void update(char *db_name, char *layer_name, char *key, char *value);
-
 //list all
 char** list(char *db_name, char *layer_name);
 

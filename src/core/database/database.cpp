@@ -1,7 +1,12 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fstream>
 #include "../../../include/core/utils.h"
+#include <sstream>
+#include <vector>
+
+using namespace std;
 
 void initDB(bool debug) {
     //////INIT
@@ -225,16 +230,74 @@ void dropLayer(char *db_name, char *layer_name){
     }
 };
 
+//key=value
+
+
 //insert key char* value char*
-void insert(char *db_name, char *layer_name, char *key, char *value);
+void insert(char *db_name, char *layer_name, char *key, char *value){
+    char* root = getBlackboxRoot(false);
+    char* dbRoot = getBlackboxDbsRoot();
+
+    if(!checkBlackboxRoot()){
+        std::cout << "blackbox folder not found" << std::endl;
+        return;
+    }
+    if(!checkBlackboxDbsRoot()){
+        std::cout << "dbs folder not found" << std::endl;
+        return;
+    }
+    if (!checkDb(db_name)) {
+        std::cout << "db does not exist" << std::endl;
+        return;
+    }else{
+        if(checkLayer(db_name, layer_name)) {
+            //read everything line by line into a std::vector<std::string> change strings as necessary and write the whole stuff back.
+            std::vector<std::string> lines;
+            char* layer_file = (char*)malloc(strlen(dbRoot) + strlen(db_name) + strlen("/") + strlen(layer_name) + strlen(".bb") + 1);
+            strcpy(layer_file, dbRoot);
+            strcat(layer_file, db_name);
+            strcat(layer_file, "/");
+            strcat(layer_file, layer_name);
+            strcat(layer_file, ".bb");
+            std::ifstream file(layer_file);
+            std::string line;
+            while (std::getline(file, line)) {
+                lines.push_back(line);
+            }
+            file.close();
+            //check if key already exists
+            bool key_exists = false;
+            for(auto & line : lines){
+                if(line.find(key) != std::string::npos){
+                    key_exists = true;
+                    std::ostringstream oss;
+                    oss << key << "=" << value;
+                    line = oss.str();
+                }
+            }
+            if(!key_exists){
+                std::ostringstream oss;
+                oss << key << "=" << value;
+                lines.push_back(oss.str());
+            }
+            //write back to file
+            std::ofstream file2(layer_file);
+            for(auto & line : lines){
+                file2 << line << std::endl;
+            }
+            file2.close();
+        }else{
+            std::cout << "layer does not exist" << std::endl;
+            return;
+        }
+    }
+};
 //TODO insert array
 
 char* get(char *db_name, char *layer_name, char *key);
 //TODO get array
 
 void remove(char *db_name, char *layer_name, char *key);
-
-void update(char *db_name, char *layer_name, char *key, char *value);
 
 //list all
 char** list(char *db_name, char *layer_name);

@@ -62,9 +62,9 @@ bool checkBlackboxRoot(){
 char* getBlackboxDbsRoot(){
     //get blackbox dbs root. Example: /home/user/blackbox/dbs or C:/blackbox/dbs
     char* root = getBlackboxRoot(false);
-    char* dbs_root = (char*)malloc(strlen(root) + strlen("/dbs/") + 1);
+    char* dbs_root = (char*)malloc(strlen(root) + strlen("dbs/") + 1);
     strcpy(dbs_root, root);
-    strcat(dbs_root, "/dbs/");
+    strcat(dbs_root, "dbs/");
     //check if dbs folder exists if not return false else return true
     struct stat sb{};
     if (stat(dbs_root, &sb) == -1) {
@@ -99,4 +99,52 @@ bool checkDb(char *db_name){
     }else{
         return true;
     }
+};
+
+//layers are files with .bb at the end
+bool checkLayer(char *db_name, char *layer_name){
+    //check if layer exists if not return false else return true
+    char* root = getBlackboxDbsRoot();
+    char* db_root = (char*)malloc(strlen(root) + strlen(db_name) + strlen("/") + 1);
+    strcpy(db_root, root);
+    strcat(db_root, db_name);
+    strcat(db_root, "/");
+    char* layer_root = (char*)malloc(strlen(db_root) + strlen(layer_name) + strlen(".bb") + 1);
+strcpy(layer_root, db_root);
+strcat(layer_root, layer_name);
+strcat(layer_root, ".bb");
+    struct stat sb{};
+    if (stat(layer_root, &sb) == -1) {
+        return false;
+    }else{
+        return true;
+    }
+};
+char* getLayerPath(char *db_name, char *layer_name){
+    //get layer path. Example: /home/user/blackbox/dbs/db_name/layer_name.bb
+    char* root = getBlackboxDbsRoot();
+    char* db_root = (char*)malloc(strlen(root) + strlen(db_name) + strlen("/") + 1);
+    strcpy(db_root, root);
+    strcat(db_root, db_name);
+    strcat(db_root, "/");
+    char* layer_root = (char*)malloc(strlen(db_root) + strlen(layer_name) + strlen(".bb") + 1);
+strcpy(layer_root, db_root);
+strcat(layer_root, layer_name);
+strcat(layer_root, ".bb");
+    return layer_root;
+};
+
+
+char* getLayerTempPath(char *db_name, char *layer_name){
+    char* root = getBlackboxDbsRoot();
+    char* db_root = (char*)malloc(strlen(root) + strlen(db_name) + strlen("/") + 1);
+    strcpy(db_root, root);
+    strcat(db_root, db_name);
+    strcat(db_root, "/");
+    char* layer_root = (char*)malloc(strlen(db_root) + strlen(layer_name) + strlen(".bb") + 1);
+    strcpy(layer_root, db_root);
+    strcat(layer_root, layer_name);
+    strcat(layer_root, "Temp");
+    strcat(layer_root, ".bb");
+    return layer_root;
 };

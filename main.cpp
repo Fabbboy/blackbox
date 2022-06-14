@@ -12,6 +12,9 @@
 int main() {
 
     initDB(false);
+    createDB("testDB");
+    createLayer("testDB", "testLayer");
+    insert("testDB", "testLayer", "keye", "valuee");
 
 
     //init socket
