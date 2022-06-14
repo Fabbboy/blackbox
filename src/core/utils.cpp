@@ -134,17 +134,3 @@ strcat(layer_root, ".bb");
     return layer_root;
 };
 
-
-char* getLayerTempPath(char *db_name, char *layer_name){
-    char* root = getBlackboxDbsRoot();
-    char* db_root = (char*)malloc(strlen(root) + strlen(db_name) + strlen("/") + 1);
-    strcpy(db_root, root);
-    strcat(db_root, db_name);
-    strcat(db_root, "/");
-    char* layer_root = (char*)malloc(strlen(db_root) + strlen(layer_name) + strlen(".bb") + 1);
-    strcpy(layer_root, db_root);
-    strcat(layer_root, layer_name);
-    strcat(layer_root, "Temp");
-    strcat(layer_root, ".bb");
-    return layer_root;
-};
