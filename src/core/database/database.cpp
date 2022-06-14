@@ -294,10 +294,112 @@ void insert(char *db_name, char *layer_name, char *key, char *value){
 };
 //TODO insert array
 
-char* get(char *db_name, char *layer_name, char *key);
+char* get(char *db_name, char *layer_name, char *key){
+    char* root = getBlackboxRoot(false);
+    char* dbRoot = getBlackboxDbsRoot();
+
+    if(!checkBlackboxRoot()){
+        std::cout << "blackbox folder not found" << std::endl;
+        return "";
+    }
+    if(!checkBlackboxDbsRoot()){
+        std::cout << "dbs folder not found" << std::endl;
+        return "";
+    }
+    if (!checkDb(db_name)) {
+        std::cout << "db does not exist" << std::endl;
+        return "";
+    }else{
+        if(checkLayer(db_name, layer_name)) {
+            //read everything line by line into a std::vector<std::string> change strings as necessary and write the whole stuff back.
+            std::vector<std::string> lines;
+            char* layer_file = (char*)malloc(strlen(dbRoot) + strlen(db_name) + strlen("/") + strlen(layer_name) + strlen(".bb") + 1);
+            strcpy(layer_file, dbRoot);
+            strcat(layer_file, db_name);
+            strcat(layer_file, "/");
+            strcat(layer_file, layer_name);
+            strcat(layer_file, ".bb");
+            std::ifstream file(layer_file);
+            std::string line;
+            while (std::getline(file, line)) {
+                lines.push_back(line);
+            }
+            file.close();
+            //check if key already exists
+            bool key_exists = false;
+            for(auto & line : lines){
+                if(line.find(key) != std::string::npos){
+                    //return value of key
+                    std::string value = line.substr(line.find("=") + 1);
+                    return strdup(value.c_str());
+                }
+            }
+            if(!key_exists){
+                std::cout << "key does not exist" << std::endl;
+                return "";
+            }
+
+        }else{
+            std::cout << "layer does not exist" << std::endl;
+            return "";
+        }
+    }
+};
 //TODO get array
 
-void remove(char *db_name, char *layer_name, char *key);
+void removeKey(char *db_name, char *layer_name, char *key){
+    char* root = getBlackboxRoot(false);
+    char* dbRoot = getBlackboxDbsRoot();
 
-//list all
-char** list(char *db_name, char *layer_name);
+    if(!checkBlackboxRoot()){
+        std::cout << "blackbox folder not found" << std::endl;
+        return;
+    }
+    if(!checkBlackboxDbsRoot()){
+        std::cout << "dbs folder not found" << std::endl;
+        return;
+    }
+    if (!checkDb(db_name)) {
+        std::cout << "db does not exist" << std::endl;
+        return;
+    }else{
+        if(checkLayer(db_name, layer_name)) {
+            //read everything line by line into a std::vector<std::string> change strings as necessary and write the whole stuff back.
+            std::vector<std::string> lines;
+            char* layer_file = (char*)malloc(strlen(dbRoot) + strlen(db_name) + strlen("/") + strlen(layer_name) + strlen(".bb") + 1);
+            strcpy(layer_file, dbRoot);
+            strcat(layer_file, db_name);
+            strcat(layer_file, "/");
+            strcat(layer_file, layer_name);
+            strcat(layer_file, ".bb");
+            std::ifstream file(layer_file);
+            std::string line;
+            while (std::getline(file, line)) {
+                lines.push_back(line);
+            }
+            file.close();
+            //check if key already exists
+            bool key_exists = false;
+            for(auto & line : lines){
+                if(line.find(key) != std::string::npos){
+                    key_exists = true;
+                    //remove line
+                    lines.erase(std::remove(lines.begin(), lines.end(), line), lines.end());
+                }
+            }
+            if(!key_exists){
+                std::cout << "key does not exist" << std::endl;
+                return;
+            }
+            //write back to file
+            std::ofstream file2(layer_file);
+            for(auto & line : lines){
+                file2 << line << std::endl;
+            }
+            file2.close();
+        }else{
+            std::cout << "layer does not exist" << std::endl;
+            return;
+        }
+    }
+};

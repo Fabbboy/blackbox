@@ -9,12 +9,10 @@
 #include "include/core/utils.h"
 #include "include/core/database/database.h"
 
+
 int main() {
 
     initDB(false);
-    createDB("testDB");
-    createLayer("testDB", "testLayer");
-    insert("testDB", "testLayer", "keye", "valuee");
 
 
     //init socket
@@ -53,3 +51,4 @@ int main() {
     }
     return 0;
 }
+

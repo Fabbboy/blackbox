@@ -16,10 +16,7 @@ void insert(char *db_name, char *layer_name, char *key, char *value);
 char* get(char *db_name, char *layer_name, char *key);
 //TODO get array
 
-void remove(char *db_name, char *layer_name, char *key);
-
-//list all
-char** list(char *db_name, char *layer_name);
+void removeKey(char *db_name, char *layer_name, char *key);
 
 
 
