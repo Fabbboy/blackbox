@@ -1,12 +1,13 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "../../include/core/exception.h"
 
 void writeToClient(int client_fd, const char *message){
     //write message to client
     int n = write(client_fd, message, strlen(message));
     if (n < 0) {
-        std::cout << "write error" << std::endl;
+        Error("write error");
         return;
     }
 };
@@ -132,5 +133,10 @@ strcpy(layer_root, db_root);
 strcat(layer_root, layer_name);
 strcat(layer_root, ".bb");
     return layer_root;
+};
+
+
+char* getLocalNetworkIP(){
+    //get local network ip
 };
 

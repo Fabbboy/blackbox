@@ -14,4 +14,8 @@ bool checkLayer(char *db_name, char *layer_name);
 char* getLayerPath(char *db_name, char *layer_name);
 char* getLayerTempPath(char *db_name, char *layer_name);
 
+char* getLocalNetworkIP();
+
+
+
 #endif //BLACKBOX_UTILS_H

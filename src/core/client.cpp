@@ -3,6 +3,7 @@
 #include "../../include/core/client.h"
 #include "../../include/core/utils.h"
 #include "../../include/core/database/database.h"
+#include "../../include/core/exception.h"
 
 //function to handle clients
 void handleClient(int client_fd){
@@ -11,7 +12,7 @@ void handleClient(int client_fd){
     char buffer[readBytes];
     int n = read(client_fd, buffer, readBytes);
     if (n < 0) {
-        std::cout << "read error" << std::endl;
+        Error("read error");
         return;
     }
     //get client's message
@@ -22,14 +23,18 @@ void handleClient(int client_fd){
     strcpy(command, message);
 
     identifyPackage(client_fd, command);
+    //print client's command
+    Info("Command: ");
+    std::cout << command << std::endl;
 
 
     //if client disconnects or lost connect delete thread
     if (n == 0) {
-        std::cout << "client disconnected" << std::endl;
+        Error("Client disconnected");
         close(client_fd);
         pthread_exit(nullptr);
     }
+    free(message);
 };
 void identifyPackage(int client_fd, char* message){
     //split string with -.example: hello-world -> hello world
